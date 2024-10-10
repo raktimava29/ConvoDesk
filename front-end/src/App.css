@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@100..800&display=swap');
+.App {
+    height: 100vh;
+    background-image: url("../clouds.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
+html, body {
+    overflow: hidden; /* Prevent scrolling */
+}
+
+
