@@ -1,13 +1,11 @@
 import { AddIcon } from "@chakra-ui/icons";
-import { Box, Stack, Text } from "@chakra-ui/layout";
+import { Box, Stack, Text, Skeleton, Button, useToast } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { getSender } from "./ChatLogic";
-//import GroupChatModal from "./miscellaneous/GroupChatModal";
-import { Button, useToast ,Skeleton } from "@chakra-ui/react";
 import { ChatState } from "./ChatProvider";
 
-export default function MyChats({ fetchAgain }){
+export default function MyChats({ fetchAgain }) {
   const [loggedUser, setLoggedUser] = useState();
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
@@ -26,8 +24,8 @@ export default function MyChats({ fetchAgain }){
       setChats(data);
     } catch (error) {
       toast({
-        title: "Error Occured!",
-        description: "Failed to Load the chats",
+        title: "Error Occurred!",
+        description: "Failed to load the chats",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -48,7 +46,7 @@ export default function MyChats({ fetchAgain }){
       alignItems="center"
       padding={3}
       bg="white"
-      width={{ base: "100%", md: "31%" }}
+      width={{ base:"100vw" , sm:"38vw"}}
       borderRadius="lg"
       borderWidth="1px"
     >
@@ -56,7 +54,7 @@ export default function MyChats({ fetchAgain }){
         paddingBottom={3}
         paddingX={3}
         fontSize={{ base: "28px", md: "30px" }}
-        fontFamily="Work sans"
+        fontFamily="suse"
         display="flex"
         width="100%"
         justifyContent="space-between"
@@ -65,7 +63,7 @@ export default function MyChats({ fetchAgain }){
         My Chats
         {/* <GroupChatModal>
           <Button
-            display="flex"
+            d="flex"
             fontSize={{ base: "17px", md: "10px", lg: "17px" }}
             rightIcon={<AddIcon />}
           >
@@ -89,7 +87,7 @@ export default function MyChats({ fetchAgain }){
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
+                bg={selectedChat === chat ? "#098aff" : "#E8E8E8"}
                 color={selectedChat === chat ? "white" : "black"}
                 paddingX={3}
                 paddingY={2}
@@ -98,36 +96,32 @@ export default function MyChats({ fetchAgain }){
               >
                 <Text>
                   {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
+                    ? getSender(loggedUser,chat.users)
                     : chat.chatName}
                 </Text>
-                {chat.latestMessage && (
+                {/* {chat.latestMessage && (
                   <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name} : </b>
+                    <b>{chat.latestMessage.sender.name}: </b>
                     {chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
                   </Text>
-                )}
+                )} */}
               </Box>
             ))}
           </Stack>
         ) : (
-              <Stack>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-              </Stack>
-            )}
+          <Stack>
+            {Array(13)
+              .fill("")
+              .map((_, index) => (
+                <Skeleton
+                  height={{ base: "20px", md: "30px" }}
+                  key={index}
+                />
+              ))}
+          </Stack>
+        )}
       </Box>
     </Box>
   );

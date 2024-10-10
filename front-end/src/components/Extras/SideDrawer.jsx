@@ -178,19 +178,15 @@ export default function SideDrawer(){
             </Box>
             {loading ? (
               <Stack>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-                <Skeleton height={{base:"20px" , md:"30px"}}></Skeleton>
-              </Stack>
+            {Array(13)
+              .fill("")
+              .map((_, index) => (
+                <Skeleton
+                  height={{ base: "20px", md: "30px" }}
+                  key={index}
+                />
+              ))}
+          </Stack>
             ) : (
               searchResult?.map((user) => (
                 <UserListItem
