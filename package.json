@@ -1,0 +1,25 @@
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "Talk Anytime Anywhere",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon back-end/server"
+  },
+  "author": "Raktimava",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "3.6",
+    "mongoose": "^8.6.3",
+    "nodemon": "^3.1.7"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.13"
+  }
+}
