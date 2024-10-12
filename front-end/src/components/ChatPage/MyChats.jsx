@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { getSender } from "./ChatLogic";
 import { ChatState } from "./ChatProvider";
+import GroupChatModal from "./GroupChatModal";
 
 export default function MyChats({ fetchAgain }) {
   const [loggedUser, setLoggedUser] = useState();
@@ -46,14 +47,14 @@ export default function MyChats({ fetchAgain }) {
       alignItems="center"
       padding={3}
       bg="white"
-      width={{ base:"100vw" , sm:"38vw"}}
+      width={{ base:"100vw" , md:"46vw"}}
       borderRadius="lg"
       borderWidth="1px"
     >
       <Box
         paddingBottom={3}
         paddingX={3}
-        fontSize={{ base: "28px", md: "30px" }}
+        fontSize={{ base: "24px", lg: "40px" }}
         fontFamily="suse"
         display="flex"
         width="100%"
@@ -61,15 +62,15 @@ export default function MyChats({ fetchAgain }) {
         alignItems="center"
       >
         My Chats
-        {/* <GroupChatModal>
+        <GroupChatModal>
           <Button
-            d="flex"
-            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
+            display="flex"
+            fontSize={{ base: "16px", lg: "25px" }}
             rightIcon={<AddIcon />}
           >
-            New Group Chat
+            Create a Group
           </Button>
-        </GroupChatModal> */}
+        </GroupChatModal>
       </Box>
       <Box
         display="flex"
