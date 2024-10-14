@@ -47,8 +47,10 @@ export default function SideDrawer(){
         },
       };
 
+      console.log(user.token)
       const { data } = await axios.get(`/api/user?search=${search}`, config);
-
+      console.log(user.token)
+      
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
