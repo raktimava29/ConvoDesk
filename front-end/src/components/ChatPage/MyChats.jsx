@@ -47,14 +47,15 @@ export default function MyChats({ fetchAgain }) {
       alignItems="center"
       padding={3}
       bg="white"
-      width={{ base:"100vw" , md:"46vw"}}
+      width={{ base:"100vw" , md:"35vw"}}
+      height="86vh"
       borderRadius="lg"
       borderWidth="1px"
     >
       <Box
         paddingBottom={3}
         paddingX={3}
-        fontSize={{ base: "24px", lg: "40px" }}
+        fontSize={{ base: "23px", lg: "40px" }}
         fontFamily="suse"
         display="flex"
         width="100%"
@@ -65,7 +66,7 @@ export default function MyChats({ fetchAgain }) {
         <GroupChatModal>
           <Button
             display="flex"
-            fontSize={{ base: "16px", lg: "25px" }}
+            fontSize={{ base: "14px", lg: "25px" }}
             rightIcon={<AddIcon />}
           >
             Create a Group
