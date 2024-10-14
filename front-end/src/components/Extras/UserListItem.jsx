@@ -1,6 +1,6 @@
 import { Box, Text } from "@chakra-ui/layout";
 
-export default function UserListItem({ user,handleList }){
+export default function UserListItem({ user, handleList }) {
   return (
     <Box
       onClick={handleList}
@@ -11,7 +11,7 @@ export default function UserListItem({ user,handleList }){
         color: "white",
       }}
       w="100%"
-      d="flex"
+      display="flex"
       alignItems="center"
       color="black"
       px={3}

@@ -3,11 +3,11 @@ import { Button, useDisclosure, FormControl, Input, useToast, Box } from "@chakr
 import axios from "axios";
 import { useState } from "react";
 import { ChatState } from "./ChatProvider";
-// import UserBadgeItem from "../userAvatar/UserBadgeItem";
-import UserListItem from "../Extras/UserListItem"
+import UserBadgeItem from "../Extras/UserBadgeItem";
+import UserListItem from "../Extras/UserListItem";
 
-export default function GroupChatModal({ children }){
-  const { isOpen, onOpen, onClose } = useDisclosure();
+export default function GroupChatModal({ children }) {
+  const { isOpen, onOpen, onClose: closeModal } = useDisclosure();
   const [groupChatName, setGroupChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -28,14 +28,14 @@ export default function GroupChatModal({ children }){
       });
       return;
     }
-
+    
     setSelectedUsers([...selectedUsers, userToAdd]);
   };
 
   const handleSearch = async (query) => {
     setSearch(query);
-    if(!query.trim()){
-      setSearchResult([]); 
+    if (!query.trim()) {
+      setSearchResult([]);
       return;
     }
 
@@ -84,14 +84,14 @@ export default function GroupChatModal({ children }){
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post(
-        `/api/chat/group`,
-        {
-          name: groupChatName,
-          users: JSON.stringify(selectedUsers.map((u) => u._id)),
-        },
-        config
-      );
+      
+      console.log(user.token)
+      const { data } = await axios.post(`/api/chat/group`,
+      {
+        name: groupChatName,
+        users: JSON.stringify(selectedUsers.map((u) => u._id)),
+      },config);
+      console.log(data),
       setChats([data, ...chats]);
       onClose();
       toast({
@@ -113,10 +113,14 @@ export default function GroupChatModal({ children }){
     }
   };
 
+  const onClose = () => {
+    setSearchResult([]);
+    closeModal(); 
+  };
+
   return (
     <>
       <span onClick={onOpen}>{children}</span>
-
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -142,7 +146,7 @@ export default function GroupChatModal({ children }){
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
-            {/* <Box w="100%" display="flex" flexWrap="wrap">
+            <Box w="100%" d="flex" flexWrap="wrap">
               {selectedUsers.map((u) => (
                 <UserBadgeItem
                   key={u._id}
@@ -150,7 +154,7 @@ export default function GroupChatModal({ children }){
                   handleFunction={() => handleDelete(u)}
                 />
               ))}
-            </Box> */}
+            </Box>
             {loading ? (
               <div>Loading...</div>
             ) : (
@@ -158,7 +162,7 @@ export default function GroupChatModal({ children }){
                 <UserListItem
                   key={user._id}
                   user={user}
-                  handleFunction={() => handleGroup(user)}
+                  handleList={() => handleGroup(user)}
                 />
               ))
             )}
