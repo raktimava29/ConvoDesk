@@ -85,7 +85,6 @@ export default function GroupChatModal({ children }) {
         },
       };
       
-      console.log(user.token)
       const { data } = await axios.post(`/api/chat/group`,
       {
         name: groupChatName,

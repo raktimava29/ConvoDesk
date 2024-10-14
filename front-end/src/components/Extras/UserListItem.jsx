@@ -1,9 +1,9 @@
 import { Box, Text } from "@chakra-ui/layout";
 
-export default function UserListItem({ user, handleList }) {
+export default function UserListItem({ user, handleFunction }) {
   return (
     <Box
-      onClick={handleList}
+      onClick={handleFunction}
       cursor="pointer"
       bg="#E8E8E8"
       _hover={{
