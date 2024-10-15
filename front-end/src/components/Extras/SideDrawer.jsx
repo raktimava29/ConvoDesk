@@ -48,7 +48,6 @@ export default function SideDrawer(){
       };
       
       const { data } = await axios.get(`/api/user?search=${search}`, config);
-      
       setLoading(false);
       setSearchResult(data);
     } catch (error) {
@@ -192,7 +191,7 @@ export default function SideDrawer(){
                 <UserListItem
                   key={user._id}
                   user={user}
-                  handleList={() => accessChat(user._id)}
+                  handleFunction={() => accessChat(user._id)}
                 />
               ))
             ) }

@@ -10,6 +10,8 @@ var userRoute = require('./routers/user-route');
 
 var chatRoute = require('./routers/chat-route');
 
+var messageRoute = require('./routers/message-route');
+
 var _require = require("./error-handling/error-handler"),
     notFound = _require.notFound,
     errorHandler = _require.errorHandler;
@@ -23,6 +25,7 @@ app.get("/", function (req, res) {
 });
 app.use('/api/user', userRoute);
 app.use('/api/chat', chatRoute);
+app.use('/api/msg', messageRoute);
 app.use(notFound);
 app.use(errorHandler);
 var PORT = process.env.PORT || 5000;

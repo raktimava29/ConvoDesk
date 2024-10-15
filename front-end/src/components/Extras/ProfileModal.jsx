@@ -18,11 +18,11 @@ export default function ProfileModal({ user, children }) {
 
   return (
     <>
+    {console.log(user)}
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (
         <IconButton
-          display={{ base: "flex" }}
           icon={<ViewIcon />}
           onClick={onOpen}
         />

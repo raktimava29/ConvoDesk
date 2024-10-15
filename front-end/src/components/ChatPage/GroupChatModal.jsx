@@ -161,7 +161,7 @@ export default function GroupChatModal({ children }) {
                 <UserListItem
                   key={user._id}
                   user={user}
-                  handleList={() => handleGroup(user)}
+                  handleFunction={() => handleGroup(user)}
                 />
               ))
             )}
