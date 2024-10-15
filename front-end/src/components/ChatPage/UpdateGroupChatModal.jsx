@@ -194,7 +194,6 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
         icon={<ViewIcon />}
         onClick={onOpen}
       />
-
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>

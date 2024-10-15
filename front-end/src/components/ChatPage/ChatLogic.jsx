@@ -37,10 +37,10 @@ export const isSameUser = (messages, m, i) => {
 };
 
 export const getSender = (loggedUser, users) => {
-  if (!users || users.length === 0) return "No Users"; // Check if users array is empty
+  if (!users || users.length === 0) return "No Users";
   return users[0]?._id === loggedUser?._id
-    ? users[1]?.name || "Unknown" // Safely access users[1].name
-    : users[0]?.name || "Unknown"; // Safely access users[0].name
+    ? users[1]?.name || "Unknown"
+    : users[0]?.name || "Unknown";
 };
 
 
