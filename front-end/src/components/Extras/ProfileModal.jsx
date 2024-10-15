@@ -18,7 +18,6 @@ export default function ProfileModal({ user, children }) {
 
   return (
     <>
-    {console.log(user)}
       {children ? (
         <span onClick={onOpen}>{children}</span>
       ) : (

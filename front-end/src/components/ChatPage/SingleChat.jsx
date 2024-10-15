@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, flexbox, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
 import { ChatState } from "./ChatProvider";
 import { ArrowBackIcon, ViewIcon } from "@chakra-ui/icons";
 import ProfileModal from "../Extras/ProfileModal";
@@ -7,7 +7,7 @@ import { getSender, getSenderFull } from "./ChatLogic";
 
 export default function SingleChat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat } = ChatState();
-  const { onOpen } = useDisclosure();
+  const { isOpen,onOpen,onClose } = useDisclosure();
   return (
     <>
       {selectedChat ? (
@@ -32,27 +32,44 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
       </Text>
       <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
     </Box>
-    <Box mt={2}>
-  <Text fontSize="md" fontFamily="suse">Group Members:</Text>
-  <Box display="flex" flexWrap="wrap" gap={2}>
-    {selectedChat.users.map((user) => (
-      <ProfileModal key={user._id} user={user}>
-        <Button
-          display="flex"
-          alignItems="center"
-          p={2}
-          border="1px solid lightgray"
-          borderRadius="md"
-          fontSize="md"
-          fontFamily="suse"
-        >
-          {user.name}
-        </Button>
-      </ProfileModal>
-    ))}
-  </Box>
-</Box>
-
+    <IconButton
+          icon={<ViewIcon />}
+          onClick={onOpen}
+        />
+        <Modal size={{base:"xs" , md:"lg"}} key={user} onClose={onClose} isOpen={isOpen} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader
+            fontSize="40px"
+            fontFamily="suse"
+            display="flex"
+            justifyContent="center"
+          >
+          Group Members:
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            flexDirection="column"
+          >
+          {selectedChat.users.map((user) => (
+            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" key={user}>
+            <Text as='b' fontSize={{ base: "25px", md: "30px" }} fontFamily="suse" key={user}>
+              {user.name}
+              </Text>
+              <Text fontSize={{ base: "20px", md: "27px" }} display="flex" flexDirection="row" fontFamily="suse" key={user}>
+              Email: {user.email}
+              </Text>
+            </Box>
+          ))}
+          </ModalBody>
+          <ModalFooter>
+            <Button onClick={onClose}>Close</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
   </>
 ) : (
   <>
