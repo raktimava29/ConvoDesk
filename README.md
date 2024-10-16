@@ -1,6 +1,6 @@
-# ConvoTable
+# ConvoDesk
 
-ConvoTable is a real-time communication platform designed for seamless interactions, supporting both one-on-one and group conversations. The project leverages modern web technologies to create a responsive and intuitive messaging interface.
+ConvoDesk is a real-time communication platform designed for seamless interactions, supporting both one-on-one and group conversations. The project leverages modern web technologies to create a responsive and intuitive messaging interface.
 
 ## Features
 
