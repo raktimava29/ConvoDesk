@@ -19,7 +19,7 @@ export default function ChatProvider({children}){
     },[navigateTo])
     
     return(
-        <ChatContext.Provider value={{user,setUser,selectedChat,setSelectedChat,chats,setChats}}>
+        <ChatContext.Provider value={{user,setUser,selectedChat,setSelectedChat,chats,setChats,notification,setNotification}}>
             {children}
         </ChatContext.Provider>
     )
