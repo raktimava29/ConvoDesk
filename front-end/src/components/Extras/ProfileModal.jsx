@@ -1,17 +1,6 @@
 import { ViewIcon } from "@chakra-ui/icons";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  useDisclosure,
-  IconButton,
-  Text
-} from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from "@chakra-ui/react";
+import { Button, useDisclosure, IconButton, Text } from "@chakra-ui/react";  
 
 export default function ProfileModal({ user, children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();

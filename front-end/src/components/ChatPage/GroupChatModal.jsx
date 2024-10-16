@@ -90,7 +90,6 @@ export default function GroupChatModal({ children }) {
         name: groupChatName,
         users: JSON.stringify(selectedUsers.map((u) => u._id)),
       },config);
-      console.log(data),
       setChats([data, ...chats]);
       onClose();
       toast({
