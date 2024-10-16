@@ -62,22 +62,21 @@ var sendMessage = asyncHandler(function _callee(req, res) {
 
         case 20:
           res.json(message);
-          console.log(message);
-          _context.next = 28;
+          _context.next = 27;
           break;
 
-        case 24:
-          _context.prev = 24;
+        case 23:
+          _context.prev = 23;
           _context.t0 = _context["catch"](5);
           res.status(400);
           throw new Error(_context.t0.message);
 
-        case 28:
+        case 27:
         case "end":
           return _context.stop();
       }
     }
-  }, null, null, [[5, 24]]);
+  }, null, null, [[5, 23]]);
 });
 var allMessages = asyncHandler(function _callee2(req, res) {
   var messages;

@@ -55,7 +55,7 @@ export default function MyChats({ fetchAgain }) {
       <Box
         paddingBottom={3}
         paddingX={3}
-        fontSize={{ base: "23px", lg: "40px" }}
+        fontSize={{ base: "23px", lg: "35px" }}
         fontFamily="suse"
         display="flex"
         width="100%"
@@ -66,7 +66,7 @@ export default function MyChats({ fetchAgain }) {
         <GroupChatModal>
           <Button
             display="flex"
-            fontSize={{ base: "14px", lg: "25px" }}
+            fontSize={{ base: "20px", lg: "20px", md:"15px" }}
             rightIcon={<AddIcon />}
           >
             Create a Group
