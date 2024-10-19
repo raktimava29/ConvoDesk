@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node back-end/server.js",
     "server": "nodemon back-end/server.js",
-    "build": "npm install --legacy-peer-deps && npm install --legacy-peer-deps --prefix frontend && npm run build --prefix frontend"
+    "build": "npm install --legacy-peer-deps && npm install --legacy-peer-deps --prefix front-end && npm run build --prefix front-end"
   },
   "author": "Raktimava",
   "license": "ISC",
@@ -23,7 +23,6 @@
     "socket.io": "^4.8.0"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.13",
-    "vite": "^5.4.7"
+    "tailwindcss": "^3.4.13"
   }
 }
