@@ -4,7 +4,9 @@
   "description": "Talk Anytime Anywhere",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon back-end/server"
+    "start": "node back-end/server.js",
+    "server": "nodemon back-end/server.js",
+    "build": "npm install && npm install --prefix front-end && npm run build --prefix front-end"
   },
   "author": "Raktimava",
   "license": "ISC",

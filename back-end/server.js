@@ -5,6 +5,8 @@ const userRoute = require('./routers/user-route');
 const chatRoute = require('./routers/chat-route');
 const messageRoute = require('./routers/message-route');
 const { notFound, errorHandler } = require("./error-handling/error-handler");
+const path = require("path");
+const exp = require("constants");
 
 dotenv.config();
 connectDB();
@@ -13,13 +15,25 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/",(req,res) => {
-    res.send("Api is running");
-});
-
 app.use('/api/user' , userRoute);
 app.use('/api/chat' , chatRoute);
 app.use('/api/msg' , messageRoute);
+
+// Deploy
+const __dirname1 = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname1, '/front-end/dist')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname1, 'front-end', 'dist', 'index.html'));
+    });
+} else {
+    app.get("/", (req, res) => {
+        res.send("API is running");
+    });
+}
+
+// Deploy
 
 app.use(notFound);
 
@@ -45,7 +59,7 @@ io.on("connection" , (socket) => {
 
     socket.on("Join", (room) => {
         socket.join(room);
-        console.log("User Joined " + room);
+        //console.log("User Joined " + room);
     })
 
     socket.on("Typing", (room) => socket.in(room).emit("Typing"))
@@ -64,7 +78,7 @@ io.on("connection" , (socket) => {
     })
 
     socket.off("setup", () => {
-        console.log("User Disconnected");
+        //console.log("User Disconnected");
         socket.leave(useData._id);
     })
 
