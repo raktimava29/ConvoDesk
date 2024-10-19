@@ -12,8 +12,11 @@ ConvoDesk is a real-time communication platform designed for seamless interactio
 ## Tech Stack
 
 - **Frontend**: React, Chakra UI
-- **Backend**: Node.js, Express.j
+- **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Real-Time Communication**: Socket.io
 - **Authentication**: JWT (JSON Web Tokens)
 
+## Live Demo
+
+You can check out the deployed project [here](https://convodesk.onrender.com/).
