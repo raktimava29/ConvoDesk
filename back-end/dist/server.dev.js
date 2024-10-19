@@ -31,7 +31,7 @@ app.use('/api/msg', messageRoute); // Deploy
 var __dirname1 = path.resolve();
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express["static"](path.join(__dirname1, '/front-end/build')));
+  app.use(express["static"](path.join(__dirname1, '/front-end/dist')));
   app.get('*', function (req, res) {
     res.sendFile(path.resolve(__dirname1, 'front-end', 'dist', 'index.html'));
   });
