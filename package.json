@@ -6,11 +6,12 @@
   "scripts": {
     "start": "node back-end/server.js",
     "server": "nodemon back-end/server.js",
-    "build": "npm install --legacy-peer-deps && npm install --legacy-peer-deps --prefix front-end && npm run build --prefix front-end"
+    "build": "npm install && npm install --prefix front-end && npm run build --prefix front-end"
   },
   "author": "Raktimava",
   "license": "ISC",
   "dependencies": {
+    "vite": "^5.4.9",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.0",
     "dotenv": "^16.4.5",
