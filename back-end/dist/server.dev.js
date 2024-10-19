@@ -16,16 +16,32 @@ var _require = require("./error-handling/error-handler"),
     notFound = _require.notFound,
     errorHandler = _require.errorHandler;
 
+var path = require("path");
+
+var exp = require("constants");
+
 dotenv.config();
 connectDB();
 var app = express();
 app.use(express.json());
-app.get("/", function (req, res) {
-  res.send("Api is running");
-});
 app.use('/api/user', userRoute);
 app.use('/api/chat', chatRoute);
-app.use('/api/msg', messageRoute);
+app.use('/api/msg', messageRoute); // Deploy
+
+var __dirname1 = path.resolve();
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express["static"](path.join(__dirname1, '/front-end/dist')));
+  app.get('*', function (req, res) {
+    res.sendFile(path.resolve(__dirname1, 'front-end', 'dist', 'index.html'));
+  });
+} else {
+  app.get("/", function (req, res) {
+    res.send("API is running");
+  });
+} // Deploy
+
+
 app.use(notFound);
 app.use(errorHandler);
 var PORT = process.env.PORT || 5000;
@@ -44,8 +60,7 @@ io.on("connection", function (socket) {
     socket.emit("connection");
   });
   socket.on("Join", function (room) {
-    socket.join(room);
-    console.log("User Joined " + room);
+    socket.join(room); //console.log("User Joined " + room);
   });
   socket.on("Typing", function (room) {
     return socket["in"](room).emit("Typing");
@@ -62,7 +77,7 @@ io.on("connection", function (socket) {
     });
   });
   socket.off("setup", function () {
-    console.log("User Disconnected");
+    //console.log("User Disconnected");
     socket.leave(useData._id);
   });
 });
