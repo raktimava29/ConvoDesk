@@ -1,12 +1,31 @@
 import { useState, useEffect } from "react";
-import { Box, Text, Stack } from "@chakra-ui/layout";
-import { Button } from "@chakra-ui/button";
-import { Menu, MenuList, MenuButton, Tooltip, MenuDivider, MenuItem } from "@chakra-ui/react";
-import { Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay } from "@chakra-ui/react";
-import { Input, Spinner, Skeleton } from "@chakra-ui/react";
-import { useDisclosure, useToast } from "@chakra-ui/react";
-import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import { Avatar } from "@chakra-ui/avatar";
+import {
+  Box,
+  Text,
+  Stack,
+  Tooltip,
+  Menu,
+  MenuList,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Input,
+  Spinner,
+  Skeleton,
+  useDisclosure,
+  useToast,
+  Button,
+  Avatar,
+  IconButton,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { BellIcon, ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { ChatState } from "../ChatPage/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import { useNavigate } from "react-router-dom";
@@ -23,12 +42,13 @@ export default function SideDrawer() {
 
   const navigateTo = useNavigate();
   const toast = useToast();
+  const { colorMode, toggleColorMode } = useColorMode();
+  const bgColor = useColorModeValue("white", "gray.800");
+  const textColor = useColorModeValue("black", "white");
 
-  const { user, setUser, selectedChat, setSelectedChat, chats, setChats, notification, setNotification } = ChatState();
-
+  const { user, setSelectedChat, chats, setChats, notification, setNotification } = ChatState();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // Load notifications from localStorage when the component mounts
   useEffect(() => {
     const storedNotifications = JSON.parse(localStorage.getItem("notifications"));
     if (storedNotifications) {
@@ -36,11 +56,10 @@ export default function SideDrawer() {
     }
   }, [setNotification]);
 
-  // Function to handle search
   const handleSearch = async () => {
     if (!search) {
       toast({
-        title: "Please Enter something in search",
+        title: "Please enter something in search",
         status: "warning",
         duration: 5000,
         isClosable: true,
@@ -57,27 +76,27 @@ export default function SideDrawer() {
         },
       };
       const { data } = await axios.get(`/api/user?search=${search}`, config);
-      setLoading(false);
       setSearchResult(data);
     } catch (error) {
       toast({
-        title: "Error Occured!",
-        description: "Failed to Load the Search Results",
+        title: "Error Occurred!",
+        description: "Failed to load search results",
         status: "error",
         duration: 5000,
         isClosable: true,
         position: "bottom-left",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Function to access a chat
   const accessChat = async (userId) => {
     try {
       setLoadingChat(true);
       const config = {
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
       };
@@ -85,7 +104,6 @@ export default function SideDrawer() {
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
-      setLoadingChat(false);
       onClose();
     } catch (error) {
       toast({
@@ -96,23 +114,22 @@ export default function SideDrawer() {
         isClosable: true,
         position: "bottom-left",
       });
+    } finally {
+      setLoadingChat(false);
     }
   };
 
-  // Function to clear notification and update localStorage
   const clearNotification = (notif) => {
-    setNotification(notification.filter((n) => n !== notif));
     const updatedNotifications = notification.filter((n) => n !== notif);
+    setNotification(updatedNotifications);
     localStorage.setItem("notifications", JSON.stringify(updatedNotifications));
   };
 
-  // Handle opening a notification chat
   const handleNotificationClick = (notif) => {
     setSelectedChat(notif.chat);
-    clearNotification(notif); // Clear the notification once the chat is opened
+    clearNotification(notif);
   };
 
-  // Update localStorage whenever the notification state changes
   useEffect(() => {
     localStorage.setItem("notifications", JSON.stringify(notification));
   }, [notification]);
@@ -124,7 +141,7 @@ export default function SideDrawer() {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" bg="white" w="100%" p="5px 10px" borderWidth="5px">
+      <Box display="flex" justifyContent="space-between" alignItems="center" bg={bgColor} color={textColor} w="100%" p="5px 10px" borderWidth="3px">
         <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
           <Button variant="ghost" onClick={onOpen}>
             <i className="fas fa-search"></i>
@@ -133,10 +150,22 @@ export default function SideDrawer() {
             </Text>
           </Button>
         </Tooltip>
-        <Text fontSize="4xl" fontFamily="suse">
-          Chatify
+
+        <Text fontSize="4xl" fontFamily="suse" fontWeight="600">
+          ConvoDesk
         </Text>
-        <div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Dark Mode Toggle Button */}
+          <Box>
+              <IconButton
+                  icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+                  onClick={toggleColorMode}
+                  bg={colorMode === "light" ? "white" : "gray.800"}
+                  size="lg"
+                  isRound
+              />
+            </Box>
           <Menu>
             <MenuButton p={1}>
               <NotificationBadge count={notification.length} effect={Effect.SCALE} />
@@ -146,30 +175,36 @@ export default function SideDrawer() {
               {!notification.length && "No New Messages"}
               {notification.map((notif) => (
                 <MenuItem key={notif._id} onClick={() => handleNotificationClick(notif)}>
-                  {notif.chat.isGroupChat
-                    ? `New Message in ${notif.chat.chatName}`
-                    : `New Message from ${getSender(user, notif.chat.users)}`}
+                  {notif.chat.isGroupChat ? `New Message in ${notif.chat.chatName}` : `New Message from ${getSender(user, notif.chat.users)}`}
                 </MenuItem>
               ))}
             </MenuList>
           </Menu>
+
           <Menu>
-            <MenuButton as={Button} bg="white" rightIcon={<ChevronDownIcon />}>
+            <MenuButton
+              as={Button}
+              bg={useColorModeValue("white", "gray.800")} // Light mode: white, Dark mode: gray.700
+              _hover={{ bg: useColorModeValue("gray.100", "gray.700") }} // Hover effect
+              _focus={{ boxShadow: "none" }}
+            >
               <Avatar size="sm" cursor="pointer" name={user.name} />
             </MenuButton>
-            <MenuList>
+            <MenuList bg={useColorModeValue("white", "gray.800")} borderColor={useColorModeValue("gray.200", "gray.600")}>
               <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>
+                <MenuItem _hover={{ bg: useColorModeValue("gray.100", "gray.600") }}>My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />
-              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+              <MenuItem _hover={{ bg: useColorModeValue("red.100", "red.600") }} onClick={logoutHandler}>
+                Logout
+              </MenuItem>
             </MenuList>
           </Menu>
         </div>
       </Box>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={colorMode === "light" ? "white" : "gray.800"} color={colorMode === "light" ? "black" : "white"}>
           <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
           <DrawerBody>
             <Box display="flex" flexDirection="column" pb={2}>
@@ -179,8 +214,10 @@ export default function SideDrawer() {
                 mt={5}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                bg={colorMode === "light" ? "gray.100" : "gray.700"}
+                color={colorMode === "light" ? "black" : "white"}
               />
-              <Button width={100} mt={3} onClick={handleSearch}>
+              <Button width={100} mt={3} onClick={handleSearch} bg={colorMode === "light" ? "blue.500" : "blue.300"} color="white" _hover={{ bg: colorMode === "light" ? "blue.600" : "blue.400" }}>
                 Go
               </Button>
             </Box>
@@ -189,7 +226,7 @@ export default function SideDrawer() {
                 {Array(13)
                   .fill("")
                   .map((_, index) => (
-                    <Skeleton height={{ base: "20px", md: "30px" }} key={index} />
+                    <Skeleton height={{ base: "20px", md: "30px" }} key={index} bg={colorMode === "light" ? "gray.200" : "gray.600"} />
                   ))}
               </Stack>
             ) : (
@@ -197,7 +234,7 @@ export default function SideDrawer() {
                 <UserListItem key={user._id} user={user} handleFunction={() => accessChat(user._id)} />
               ))
             )}
-            {loadingChat && <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />}
+            {loadingChat && <Spinner thickness="4px" speed="0.65s" emptyColor={colorMode === "light" ? "gray.200" : "gray.600"} color={colorMode === "light" ? "blue.500" : "blue.300"} size="xl" />}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

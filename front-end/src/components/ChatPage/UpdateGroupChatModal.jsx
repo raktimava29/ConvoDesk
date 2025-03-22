@@ -1,4 +1,4 @@
-import { ViewIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from "@chakra-ui/react";  
 import { Button, useDisclosure, FormControl, Input, useToast, Box, IconButton, Spinner
@@ -191,7 +191,7 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
     <>
       <IconButton
         display={{ base: "flex" }}
-        icon={<ViewIcon />}
+        icon={<EditIcon />}
         onClick={onOpen}
       />
       <Modal onClose={onClose} isOpen={isOpen} isCentered>

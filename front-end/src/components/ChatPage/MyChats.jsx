@@ -1,17 +1,23 @@
-import { AddIcon } from "@chakra-ui/icons";
-import { Box, Stack, Text, Skeleton, Button, useToast } from "@chakra-ui/react";
+import { Box, Stack, Text, Skeleton, Button, useToast, useColorModeValue , useColorMode } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { getSender } from "./ChatLogic";
 import { ChatState } from "./ChatProvider";
 import GroupChatModal from "./GroupChatModal";
+import { AddIcon } from "@chakra-ui/icons";
+import { color } from "framer-motion";
 
 export default function MyChats({ fetchAgain }) {
   const [loggedUser, setLoggedUser] = useState();
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
-
   const toast = useToast();
+
+  // Dynamic colors for light and dark mode
+  const bgColor = useColorModeValue("white", "gray.800");
+  const boxBgColor = useColorModeValue("#F8F8F8", "gray.700");
+  const selectedBg = useColorModeValue("#098aff", "blue.600");
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const fetchChats = async () => {
     try {
@@ -20,7 +26,6 @@ export default function MyChats({ fetchAgain }) {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      
       const { data } = await axios.get("/api/chat", config);
       setChats(data);
     } catch (error) {
@@ -46,8 +51,8 @@ export default function MyChats({ fetchAgain }) {
       flexDirection="column"
       alignItems="center"
       padding={3}
-      bg="white"
-      width={{ base:"100vw" , md:"35vw"}}
+      bg={bgColor}
+      width={{ base: "100vw", md: "35vw" }}
       height="86vh"
       borderRadius="lg"
       borderWidth="1px"
@@ -64,20 +69,20 @@ export default function MyChats({ fetchAgain }) {
       >
         My Chats
         <GroupChatModal>
-          <Button
-            display="flex"
-            fontSize={{ base: "20px", lg: "20px", md:"15px" }}
-            rightIcon={<AddIcon />}
-          >
-            Create a Group
-          </Button>
-        </GroupChatModal>
+        <Button
+          display="flex"
+          fontSize={{ base: "20px", lg: "20px", md: "15px" }}
+          rightIcon={<AddIcon/>}
+        >
+          Create a Group
+        </Button>
+      </GroupChatModal>
       </Box>
       <Box
         display="flex"
         flexDirection="column"
         padding={3}
-        bg="#F8F8F8"
+        bg={boxBgColor}
         width="100%"
         height="100%"
         borderRadius="lg"
@@ -89,26 +94,17 @@ export default function MyChats({ fetchAgain }) {
               <Box
                 onClick={() => setSelectedChat(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#098aff" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={selectedChat === chat ? selectedBg : boxBgColor}
+                color={selectedChat === chat ? colorMode === "light" ? "white" : "black" : colorMode === "light" ? "black" : "white"}
                 paddingX={3}
                 paddingY={2}
                 borderRadius="lg"
+                fontSize='lg'
                 key={chat._id}
               >
                 <Text>
-                  {!chat.isGroupChat
-                    ? getSender(loggedUser,chat.users)
-                    : chat.chatName}
+                  {!chat.isGroupChat ? getSender(loggedUser, chat.users) : chat.chatName}
                 </Text>
-                {/* {chat.latestMessage && (
-                  <Text fontSize="xs">
-                    <b>{chat.latestMessage.sender.name}: </b>
-                    {chat.latestMessage.content.length > 50
-                      ? chat.latestMessage.content.substring(0, 51) + "..."
-                      : chat.latestMessage.content}
-                  </Text>
-                )} */}
               </Box>
             ))}
           </Stack>
@@ -117,10 +113,7 @@ export default function MyChats({ fetchAgain }) {
             {Array(13)
               .fill("")
               .map((_, index) => (
-                <Skeleton
-                  height={{ base: "20px", md: "30px" }}
-                  key={index}
-                />
+                <Skeleton height={{ base: "20px", md: "30px" }} key={index} />
               ))}
           </Stack>
         )}
