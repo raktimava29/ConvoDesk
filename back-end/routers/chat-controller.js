@@ -69,24 +69,32 @@ const getChats = asyncHandler(async (req, res) => {
 });
 
 const createGroup = asyncHandler(async (req, res) => {
-  if (!req.body.users || !req.body.name) {
-    return res.status(400).send({ message: "Please Fill lthe required information" });
+  const { name, users } = req.body;
+
+  if (!users || !name) {
+    return res.status(400).json({ message: "Please fill all the required information" });
   }
 
-  var users = JSON.parse(req.body.users);
+  const parsedUsers = JSON.parse(users);
 
-  if (users.length < 2) {
-    return res
-      .status(400)
-      .send("More than 2 users are required to form a group chat");
+  if (parsedUsers.length < 2) {
+    return res.status(400).json({ message: "At least 2 users are required to form a group chat" });
   }
 
-  users.push(req.user);
+  parsedUsers.push(req.user);
 
   try {
+    // **Check if a group with the same name already exists**
+    const existingGroup = await Chat.findOne({ chatName: name, isGroupChat: true });
+    
+    if (existingGroup) {
+      return res.status(400).json({ message: "A group with this name already exists!" });
+    }
+
+    // Create the group
     const groupChat = await Chat.create({
-      chatName: req.body.name,
-      users: users,
+      chatName: name,
+      users: parsedUsers,
       isGroupChat: true,
       groupAdmin: req.user,
     });
@@ -95,12 +103,12 @@ const createGroup = asyncHandler(async (req, res) => {
       .populate("users", "-password")
       .populate("groupAdmin", "-password");
 
-    res.status(200).json(fullGroupChat);
+    res.status(201).json(fullGroupChat);
   } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
+    res.status(500).json({ message: error.message });
   }
 });
+
 
 const reGroup = asyncHandler(async (req, res) => {
   const { chatId, chatName } = req.body;
@@ -152,29 +160,40 @@ const removeGroup = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
   
   const chat = await Chat.findById(chatId);
-  if (chat.groupAdmin.toString() === userId) {
+  if (!chat) {
+    res.status(404);
+    throw new Error("Chat not found");
+  }
+
+  // Prevent removal of group admin by others
+  if (chat.groupAdmin.toString() === userId && req.user._id.toString() !== userId) {
     res.status(400);
     throw new Error("Cannot remove group admin");
   }
 
+  // Insufficient Members
+  if (chat.users.length === 3) {
+    await Chat.findByIdAndDelete(chatId);
+    return res.json({ message: "Group deleted"});
+  }
+
+  // Remove the user from the group
   const removed = await Chat.findByIdAndUpdate(
     chatId,
-    {
-      $pull: { users: userId },
-    },
-    {
-      new: true,
-    }
+    { $pull: { users: userId } },
+    { new: true }
   )
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
   if (!removed) {
     res.status(404);
-    throw new Error("Chat Unavailabe");
-  } else {
-    res.json(removed);
+    throw new Error("Chat unavailable");
   }
+
+  res.json(removed);
 });
+
+
 
 module.exports = { accessChat, getChats, createGroup, reGroup, addGroup, removeGroup,};

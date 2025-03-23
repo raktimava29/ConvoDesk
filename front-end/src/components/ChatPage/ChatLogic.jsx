@@ -45,5 +45,9 @@ export const getSender = (loggedUser, users) => {
 
 
 export const getSenderFull = (loggedUser, users) => {
+  if (!users || users.length !== 2) return null; // Ensure it's a one-on-one chat
+
   return users[0]._id === loggedUser._id ? users[1] : users[0];
 };
+
+

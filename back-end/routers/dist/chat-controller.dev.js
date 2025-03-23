@@ -150,75 +150,100 @@ var getChats = asyncHandler(function _callee3(req, res) {
   }, null, null, [[0, 4]]);
 });
 var createGroup = asyncHandler(function _callee4(req, res) {
-  var users, groupChat, fullGroupChat;
+  var _req$body, name, users, parsedUsers, existingGroup, groupChat, fullGroupChat;
+
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
-          if (!(!req.body.users || !req.body.name)) {
-            _context4.next = 2;
+          _req$body = req.body, name = _req$body.name, users = _req$body.users;
+
+          if (!(!users || !name)) {
+            _context4.next = 3;
             break;
           }
 
-          return _context4.abrupt("return", res.status(400).send({
-            message: "Please Fill lthe required information"
+          return _context4.abrupt("return", res.status(400).json({
+            message: "Please fill all the required information"
           }));
 
-        case 2:
-          users = JSON.parse(req.body.users);
+        case 3:
+          parsedUsers = JSON.parse(users);
 
-          if (!(users.length < 2)) {
-            _context4.next = 5;
+          if (!(parsedUsers.length < 2)) {
+            _context4.next = 6;
             break;
           }
 
-          return _context4.abrupt("return", res.status(400).send("More than 2 users are required to form a group chat"));
+          return _context4.abrupt("return", res.status(400).json({
+            message: "At least 2 users are required to form a group chat"
+          }));
 
-        case 5:
-          users.push(req.user);
-          _context4.prev = 6;
-          _context4.next = 9;
+        case 6:
+          parsedUsers.push(req.user);
+          _context4.prev = 7;
+          _context4.next = 10;
+          return regeneratorRuntime.awrap(Chat.findOne({
+            chatName: name,
+            isGroupChat: true
+          }));
+
+        case 10:
+          existingGroup = _context4.sent;
+
+          if (!existingGroup) {
+            _context4.next = 13;
+            break;
+          }
+
+          return _context4.abrupt("return", res.status(400).json({
+            message: "A group with this name already exists!"
+          }));
+
+        case 13:
+          _context4.next = 15;
           return regeneratorRuntime.awrap(Chat.create({
-            chatName: req.body.name,
-            users: users,
+            chatName: name,
+            users: parsedUsers,
             isGroupChat: true,
             groupAdmin: req.user
           }));
 
-        case 9:
+        case 15:
           groupChat = _context4.sent;
-          _context4.next = 12;
+          _context4.next = 18;
           return regeneratorRuntime.awrap(Chat.findOne({
             _id: groupChat._id
           }).populate("users", "-password").populate("groupAdmin", "-password"));
 
-        case 12:
+        case 18:
           fullGroupChat = _context4.sent;
-          res.status(200).json(fullGroupChat);
-          _context4.next = 20;
+          res.status(201).json(fullGroupChat);
+          _context4.next = 25;
           break;
 
-        case 16:
-          _context4.prev = 16;
-          _context4.t0 = _context4["catch"](6);
-          res.status(400);
-          throw new Error(_context4.t0.message);
+        case 22:
+          _context4.prev = 22;
+          _context4.t0 = _context4["catch"](7);
+          res.status(500).json({
+            message: _context4.t0.message
+          });
 
-        case 20:
+        case 25:
         case "end":
           return _context4.stop();
       }
     }
-  }, null, null, [[6, 16]]);
+  }, null, null, [[7, 22]]);
 });
 var reGroup = asyncHandler(function _callee5(req, res) {
-  var _req$body, chatId, chatName, updatedChat;
+  var _req$body2, chatId, chatName, updatedChat;
 
   return regeneratorRuntime.async(function _callee5$(_context5) {
     while (1) {
       switch (_context5.prev = _context5.next) {
         case 0:
-          _req$body = req.body, chatId = _req$body.chatId, chatName = _req$body.chatName;
+          _req$body2 = req.body, chatId = _req$body2.chatId, chatName = _req$body2.chatName;
           _context5.next = 3;
           return regeneratorRuntime.awrap(Chat.findByIdAndUpdate(chatId, {
             chatName: chatName
@@ -248,13 +273,13 @@ var reGroup = asyncHandler(function _callee5(req, res) {
   });
 });
 var addGroup = asyncHandler(function _callee6(req, res) {
-  var _req$body2, chatId, userId, added;
+  var _req$body3, chatId, userId, added;
 
   return regeneratorRuntime.async(function _callee6$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
-          _req$body2 = req.body, chatId = _req$body2.chatId, userId = _req$body2.userId;
+          _req$body3 = req.body, chatId = _req$body3.chatId, userId = _req$body3.userId;
           _context6.next = 3;
           return regeneratorRuntime.awrap(Chat.findByIdAndUpdate(chatId, {
             $addToSet: {
@@ -286,29 +311,52 @@ var addGroup = asyncHandler(function _callee6(req, res) {
   });
 });
 var removeGroup = asyncHandler(function _callee7(req, res) {
-  var _req$body3, chatId, userId, chat, removed;
+  var _req$body4, chatId, userId, chat, removed;
 
   return regeneratorRuntime.async(function _callee7$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
         case 0:
-          _req$body3 = req.body, chatId = _req$body3.chatId, userId = _req$body3.userId;
+          _req$body4 = req.body, chatId = _req$body4.chatId, userId = _req$body4.userId;
           _context7.next = 3;
           return regeneratorRuntime.awrap(Chat.findById(chatId));
 
         case 3:
           chat = _context7.sent;
 
-          if (!(chat.groupAdmin.toString() === userId)) {
+          if (chat) {
             _context7.next = 7;
+            break;
+          }
+
+          res.status(404);
+          throw new Error("Chat not found");
+
+        case 7:
+          if (!(chat.groupAdmin.toString() === userId && req.user._id.toString() !== userId)) {
+            _context7.next = 10;
             break;
           }
 
           res.status(400);
           throw new Error("Cannot remove group admin");
 
-        case 7:
-          _context7.next = 9;
+        case 10:
+          if (!(chat.users.length === 3)) {
+            _context7.next = 14;
+            break;
+          }
+
+          _context7.next = 13;
+          return regeneratorRuntime.awrap(Chat.findByIdAndDelete(chatId));
+
+        case 13:
+          return _context7.abrupt("return", res.json({
+            message: "Group deleted"
+          }));
+
+        case 14:
+          _context7.next = 16;
           return regeneratorRuntime.awrap(Chat.findByIdAndUpdate(chatId, {
             $pull: {
               users: userId
@@ -317,21 +365,21 @@ var removeGroup = asyncHandler(function _callee7(req, res) {
             "new": true
           }).populate("users", "-password").populate("groupAdmin", "-password"));
 
-        case 9:
+        case 16:
           removed = _context7.sent;
 
           if (removed) {
-            _context7.next = 15;
+            _context7.next = 20;
             break;
           }
 
           res.status(404);
-          throw new Error("Chat Unavailabe");
+          throw new Error("Chat unavailable");
 
-        case 15:
+        case 20:
           res.json(removed);
 
-        case 16:
+        case 21:
         case "end":
           return _context7.stop();
       }
