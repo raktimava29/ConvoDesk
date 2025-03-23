@@ -193,8 +193,10 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
             <IconButton
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat(null)}
-              colorScheme="gray"
+              bg={colorMode === "dark" ? "gray.800" : "white"}
+              _hover={colorMode === "dark" ? "gray.800" : "white"}
             />
+
             
             {message && (!selectedChat.isGroupChat ? (
               <>
@@ -209,7 +211,13 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                   </Text>
                   <UpdateGroupChatModal fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
                 </Box>
-                <IconButton icon={<ViewIcon />} onClick={onOpen} />
+                <IconButton 
+                  icon={<ViewIcon />} 
+                  onClick={onOpen} 
+                  colorScheme="gray"
+                  bg={colorMode === "dark" ? "gray.800" : "white"}
+                _hover={colorMode === "dark" ? "gray.800" : "white"}
+                 />
                 <Modal size={{ base: "xs", md: "lg" }} key={user} onClose={onClose} isOpen={isOpen} isCentered>
                   <ModalOverlay />
                   <ModalContent bg={modalBg} borderColor={borderColor}>

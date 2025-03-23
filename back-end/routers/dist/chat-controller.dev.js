@@ -311,7 +311,7 @@ var addGroup = asyncHandler(function _callee6(req, res) {
   });
 });
 var removeGroup = asyncHandler(function _callee7(req, res) {
-  var _req$body4, chatId, userId, chat, removed;
+  var _req$body4, chatId, userId, chat, updatedChat, newAdmin;
 
   return regeneratorRuntime.async(function _callee7$(_context7) {
     while (1) {
@@ -339,7 +339,7 @@ var removeGroup = asyncHandler(function _callee7(req, res) {
           }
 
           res.status(400);
-          throw new Error("Cannot remove group admin");
+          throw new Error("Only the admin can leave or be removed by themselves.");
 
         case 10:
           if (!(chat.users.length === 3)) {
@@ -366,9 +366,9 @@ var removeGroup = asyncHandler(function _callee7(req, res) {
           }).populate("users", "-password").populate("groupAdmin", "-password"));
 
         case 16:
-          removed = _context7.sent;
+          updatedChat = _context7.sent;
 
-          if (removed) {
+          if (updatedChat) {
             _context7.next = 20;
             break;
           }
@@ -377,9 +377,28 @@ var removeGroup = asyncHandler(function _callee7(req, res) {
           throw new Error("Chat unavailable");
 
         case 20:
-          res.json(removed);
+          if (!(chat.groupAdmin.toString() === userId)) {
+            _context7.next = 26;
+            break;
+          }
 
-        case 21:
+          newAdmin = updatedChat.users[0]; // Assign first user as new admin
+
+          _context7.next = 24;
+          return regeneratorRuntime.awrap(Chat.findByIdAndUpdate(chatId, {
+            groupAdmin: newAdmin._id
+          }, {
+            "new": true
+          }).populate("users", "-password").populate("groupAdmin", "-password"));
+
+        case 24:
+          updatedChat = _context7.sent;
+          console.log("New admin assigned: ".concat(newAdmin.name));
+
+        case 26:
+          res.json(updatedChat);
+
+        case 27:
         case "end":
           return _context7.stop();
       }

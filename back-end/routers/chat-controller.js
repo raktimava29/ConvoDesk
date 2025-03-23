@@ -84,7 +84,7 @@ const createGroup = asyncHandler(async (req, res) => {
   parsedUsers.push(req.user);
 
   try {
-    // **Check if a group with the same name already exists**
+    // Check if a group with the same name already exists
     const existingGroup = await Chat.findOne({ chatName: name, isGroupChat: true });
     
     if (existingGroup) {
@@ -158,27 +158,27 @@ const addGroup = asyncHandler(async (req, res) => {
 
 const removeGroup = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
-  
+
   const chat = await Chat.findById(chatId);
   if (!chat) {
     res.status(404);
     throw new Error("Chat not found");
   }
 
-  // Prevent removal of group admin by others
+  // Prevent non-admin users from removing group admin
   if (chat.groupAdmin.toString() === userId && req.user._id.toString() !== userId) {
     res.status(400);
-    throw new Error("Cannot remove group admin");
+    throw new Error("Only the admin can leave or be removed by themselves.");
   }
 
-  // Insufficient Members
+  // If only 3 members remain, delete the group
   if (chat.users.length === 3) {
     await Chat.findByIdAndDelete(chatId);
-    return res.json({ message: "Group deleted"});
+    return res.json({ message: "Group deleted" });
   }
 
   // Remove the user from the group
-  const removed = await Chat.findByIdAndUpdate(
+  let updatedChat = await Chat.findByIdAndUpdate(
     chatId,
     { $pull: { users: userId } },
     { new: true }
@@ -186,14 +186,27 @@ const removeGroup = asyncHandler(async (req, res) => {
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
 
-  if (!removed) {
+  if (!updatedChat) {
     res.status(404);
     throw new Error("Chat unavailable");
   }
 
-  res.json(removed);
+  // If the admin left, assign a new admin from the remaining users
+  if (chat.groupAdmin.toString() === userId) {
+    const newAdmin = updatedChat.users[0]; // Assign first user as new admin
+
+    updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      { groupAdmin: newAdmin._id },
+      { new: true }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    console.log(`New admin assigned: ${newAdmin.name}`);
+  }
+
+  res.json(updatedChat);
 });
-
-
 
 module.exports = { accessChat, getChats, createGroup, reGroup, addGroup, removeGroup,};

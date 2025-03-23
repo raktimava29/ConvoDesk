@@ -24,6 +24,8 @@ import {
   IconButton,
   useColorMode,
   useColorModeValue,
+  VStack,
+  HStack,
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { ChatState } from "../ChatPage/ChatProvider";
@@ -141,103 +143,106 @@ export default function SideDrawer() {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" bg={bgColor} color={textColor} w="100%" p="5px 10px" borderWidth="3px">
-        <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
-          <Button variant="ghost" onClick={onOpen}>
-            <i className="fas fa-search"></i>
-            <Text display={{ base: "none", md: "flex" }} px={4}>
-              Search User
-            </Text>
-          </Button>
-        </Tooltip>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      w="100%"
+      p={{ base: "4px 6px", md: "5px 10px" }}
+      borderWidth="3px"
+      bg={bgColor} 
+      color={textColor}
+    >
+      <Tooltip label="Search Users to chat" hasArrow placement="bottom-end">
+        <Button variant="ghost" onClick={onOpen} fontSize={{ base: "xs", md: "md" }}>
+          <i className="fas fa-search"></i>
+          <Text display={{ base: "none", md: "inline" }} ml={6}>
+            Search
+          </Text>
+        </Button>
+      </Tooltip>
 
-        <Text fontSize="4xl" fontFamily="suse" fontWeight="600">
+        <Text fontSize={{ base: "2xl", md: "4xl" }} fontFamily="suse" fontWeight="600">
           ConvoDesk
         </Text>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          {/* Dark Mode Toggle Button */}
-          <Box>
-              <IconButton
-                  icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-                  onClick={toggleColorMode}
-                  bg={colorMode === "light" ? "white" : "gray.800"}
-                  size="lg"
-                  isRound
-              />
-            </Box>
-          <Menu>
-            <MenuButton p={1}>
-              <NotificationBadge count={notification.length} effect={Effect.SCALE} />
-              <BellIcon fontSize="2xl" m={1} />
-            </MenuButton>
-            <MenuList pl={2} pr={2}>
-              {!notification.length && "No New Messages"}
-              {notification.map((notif) => (
-                <MenuItem key={notif._id} onClick={() => handleNotificationClick(notif)}>
-                  {notif.chat.isGroupChat ? `New Message in ${notif.chat.chatName}` : `New Message from ${getSender(user, notif.chat.users)}`}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-
-          <Menu>
-            <MenuButton
-              as={Button}
-              bg={useColorModeValue("white", "gray.800")} // Light mode: white, Dark mode: gray.700
-              _hover={{ bg: useColorModeValue("gray.100", "gray.700") }} // Hover effect
-              _focus={{ boxShadow: "none" }}
-            >
-              <Avatar size="sm" cursor="pointer" name={user.name} />
-            </MenuButton>
-            <MenuList bg={useColorModeValue("white", "gray.800")} borderColor={useColorModeValue("gray.200", "gray.600")}>
-              <ProfileModal user={user}>
-                <MenuItem _hover={{ bg: useColorModeValue("gray.100", "gray.600") }}>My Profile</MenuItem>
-              </ProfileModal>
-              <MenuDivider />
-              <MenuItem _hover={{ bg: useColorModeValue("red.100", "red.600") }} onClick={logoutHandler}>
-                Logout
+      <HStack spacing={{ base: 2, md: 4 }}>
+          <IconButton
+              icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+              bg={colorMode === "light" ? "white" : "gray.800"}
+              size={{ base: "sm", md: "lg" }} 
+              isRound
+            />
+        <Menu>
+          <MenuButton>
+            <NotificationBadge count={notification.length} effect={Effect.SCALE} />
+            <BellIcon fontSize={{ base: "md", md: "2xl" }} mt={-1} />
+          </MenuButton>
+          <MenuList>
+            {notification.length === 0 ? "No New Messages" : notification.map((notif) => (
+              <MenuItem key={notif._id} onClick={() => handleNotificationClick(notif)}>
+                {notif.chat.isGroupChat ? `New Message in ${notif.chat.chatName}` : `New Message from ${getSender(user, notif.chat.users)}`}
               </MenuItem>
-            </MenuList>
-          </Menu>
-        </div>
-      </Box>
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
-        <DrawerContent bg={colorMode === "light" ? "white" : "gray.800"} color={colorMode === "light" ? "black" : "white"}>
-          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
-          <DrawerBody>
-            <Box display="flex" flexDirection="column" pb={2}>
-              <Input
-                placeholder="Search by name or email"
-                mr={2}
-                mt={5}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                bg={colorMode === "light" ? "gray.100" : "gray.700"}
-                color={colorMode === "light" ? "black" : "white"}
-              />
-              <Button width={100} mt={3} onClick={handleSearch} bg={colorMode === "light" ? "blue.500" : "blue.300"} color="white" _hover={{ bg: colorMode === "light" ? "blue.600" : "blue.400" }}>
-                Go
-              </Button>
-            </Box>
-            {loading ? (
-              <Stack>
-                {Array(13)
-                  .fill("")
-                  .map((_, index) => (
-                    <Skeleton height={{ base: "20px", md: "30px" }} key={index} bg={colorMode === "light" ? "gray.200" : "gray.600"} />
-                  ))}
-              </Stack>
-            ) : (
-              searchResult?.map((user) => (
-                <UserListItem key={user._id} user={user} handleFunction={() => accessChat(user._id)} />
-              ))
-            )}
-            {loadingChat && <Spinner thickness="4px" speed="0.65s" emptyColor={colorMode === "light" ? "gray.200" : "gray.600"} color={colorMode === "light" ? "blue.500" : "blue.300"} size="xl" />}
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+            ))}
+          </MenuList>
+        </Menu>
+
+        <Menu>
+          <MenuButton as={Button} bg={bgColor} _hover={bgColor} _active={bgColor}>
+            <Avatar size={{ base: "xs", md: "sm" }} cursor="pointer" name={user.name} />
+          </MenuButton>
+          <MenuList>
+            <ProfileModal user={user}>
+              <MenuItem>My Profile</MenuItem>
+            </ProfileModal>
+            <MenuDivider />
+            <MenuItem onClick={logoutHandler}>Logout</MenuItem>
+          </MenuList>
+        </Menu>
+      </HStack>
+    </Box>
+
+    {/* SEARCH DRAWER */}
+    <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
+      <DrawerOverlay />
+      <DrawerContent maxWidth={{ base: "80vw", md: "400px" }}>
+        <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
+        <DrawerBody>
+        <VStack align="stretch">
+          <Input
+            placeholder="Search by name or email"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            width="100%"
+            fontSize={{ base: "sm", md: "md" }}
+          />
+          <Button
+            width="30%"
+            onClick={handleSearch}
+            bg={colorMode === "light" ? "blue.500" : "blue.300"}
+            color="white"
+            _hover={{ bg: colorMode === "light" ? "blue.600" : "blue.400" }}
+            alignSelf="flex-start"
+            mb={2}
+            mt={2}
+          >
+            Go
+          </Button>
+        </VStack>
+
+
+          {loading ? (
+            <Skeleton height="30px" my={2} />
+          ) : (
+            searchResult?.map((user) => (
+              <UserListItem key={user._id} user={user} handleFunction={() => accessChat(user._id)} />
+            ))
+          )}
+          {loadingChat && <Spinner />}
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
     </>
   );
 }

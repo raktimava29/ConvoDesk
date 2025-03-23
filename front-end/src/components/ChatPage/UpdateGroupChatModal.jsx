@@ -8,6 +8,7 @@ import { useState } from "react";
 import { ChatState } from "./ChatProvider";
 import UserBadgeItem from "../Extras/UserBadgeItem";
 import UserListItem from "../Extras/UserListItem";
+import { useColorMode, useColorModeValue } from "@chakra-ui/react";
 
 export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFetchAgain }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -20,7 +21,8 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
   const modalSize = useBreakpointValue({ base: "xs", sm: "sm", md: "md", lg: "lg" });
-  
+  const { colorMode, toggleColorMode } = useColorMode();
+
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {
@@ -110,6 +112,7 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
       return;
     }
   
+    // Prevent non-admins from removing other users
     if (selectedChat.groupAdmin._id !== user._id && userToRemove._id !== user._id) {
       toast({
         title: "Only admins can remove users!",
@@ -133,12 +136,12 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
         userId: userToRemove._id,
       }, config);
   
-      console.log("API Response:", response);
+      // console.log("API Response:", response.data);
   
       if (response.data.message === "Group deleted") {
         // Remove the deleted group from the chat list
         setChats((prevChats) => prevChats.filter((chat) => chat._id !== selectedChat._id));
-        
+  
         setSelectedChat(null);
         setFetchAgain(!fetchAgain);
   
@@ -154,15 +157,28 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
         return;
       }
   
-      toast({
-        title: "User Removed",
-        description: `${userToRemove.name} has been removed from the group.`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
+      // Check if admin was removed and update the frontend state
+      if (selectedChat.groupAdmin._id === userToRemove._id) {
+        toast({
+          title: "Admin Removed",
+          description: `${userToRemove.name} was the admin. A new admin has been assigned.`,
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      } else {
+        toast({
+          title: "User Removed",
+          description: `${userToRemove.name} has been removed from the group.`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
   
+      // If the current user was removed, clear the chat
       if (userToRemove._id === user._id) {
         setSelectedChat(null);
       } else {
@@ -172,7 +188,7 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
       setFetchAgain(!fetchAgain);
       fetchMessages();
     } catch (error) {
-      console.error("Error:", error.response || error);
+      console.error("Error:", error.response?.data || error);
     } finally {
       setLoading(false);
       setGroupChatName("");
@@ -181,7 +197,14 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
   
   return (
     <>
-      <IconButton display={{ base: "flex" }} icon={<EditIcon />} onClick={onOpen} />
+      <IconButton 
+        display={{ base: "flex" }} 
+        icon={<EditIcon />}
+        onClick={onOpen} 
+        colorScheme="gray"
+        bg={colorMode === "dark" ? "gray.800" : "white"}
+        _hover={colorMode === "dark" ? "gray.800" : "white"}
+       />
       <Modal onClose={onClose} isOpen={isOpen} isCentered size={modalSize}>
         <ModalOverlay />
         <ModalContent p={{ base: 3, md: 5 }}>
@@ -197,7 +220,7 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
               ))}
             </Box>
 
-            <FormControl display="flex" flexDir={{ base: "column", md: "row" }} gap={2} width="100%">
+            <FormControl display="flex" flexDir={{ base: "column", md: "row" }} alignItems={"center"} gap={2} width="100%">
               <Input placeholder="Chat Name" value={groupChatName} onChange={(e) => setGroupChatName(e.target.value)} />
               <Button variant="solid" colorScheme="teal" isLoading={renameloading} onClick={handleRename}>
                 Update
@@ -211,13 +234,10 @@ export default function UpdateGroupChatModal({ fetchMessages, fetchAgain, setFet
             {loading ? <Spinner size="lg" mt={3} /> : searchResult.map((user) => (
               <UserListItem key={user._id} user={user} handleFunction={() => handleAddUser(user)} />
             ))}
-          </ModalBody>
-
-          <ModalFooter>
-            <Button onClick={() => handleRemove(user)} colorScheme="red" width="100%">
+            <Button onClick={() => handleRemove(user)} colorScheme="red" mt={2} width="50%">
               Leave Group
             </Button>
-          </ModalFooter>
+          </ModalBody>
         </ModalContent>
       </Modal>
     </>
