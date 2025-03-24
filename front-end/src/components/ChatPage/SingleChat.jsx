@@ -261,24 +261,19 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
             width="100%"
             height="100%"
             borderRadius="lg"
-            overflowY="hidden" // Keeps scrolling inside
+            overflow="hidden" // Prevents unexpected scroll jumps
           >
             {loading ? (
               <Box display="flex" alignItems="center" justifyContent="center" height="100%">
                 <Spinner size="xl" color={textColor} />
               </Box>
             ) : (
-              <div style={{ overflowY: "auto" }}>
+              <Box flex="1" overflowY="auto" mb={2}>
                 <ScrollableChat message={message} />
-              </div>
+              </Box>
             )}
 
-            <FormControl onKeyDown={sendMessage} id="first-name" isRequired mt={3}>
-              {isTyping && (
-                <div>
-                  <Lottie options={defaultOptions} width={70} style={{ marginBottom: 15, marginLeft: 0 }} />
-                </div>
-              )}
+            <FormControl onKeyDown={sendMessage} id="first-name" isRequired mt={1}>
               <Input
                 variant="filled"
                 bg={inputBg}
