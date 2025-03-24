@@ -68,7 +68,11 @@ export default function Home() {
     return (
         <Container maxW="xl" centerContent>
             {/* Dark Mode Toggle Button */}
-            <Box position="absolute" top="4" right="4">
+            <Box 
+                position="absolute" 
+                right={{ base: "2", md: "4" }}
+                top={{ base: "2", md: "4" }}
+                >
                 <IconButton 
                     aria-label="Toggle dark mode"
                     icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
@@ -89,6 +93,7 @@ export default function Home() {
                 borderRadius="lg"
                 borderWidth="1px"
                 color={textColor}
+                mt={20}
             >
                 <Text fontSize="4xl" textAlign="center" fontFamily="suse" fontWeight="600">
                     ConvoDesk
