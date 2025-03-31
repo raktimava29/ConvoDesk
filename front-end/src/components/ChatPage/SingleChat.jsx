@@ -268,7 +268,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
                 <Spinner size="xl" color={textColor} />
               </Box>
             ) : (
-              <Box flex="1" overflowY="auto" mb={2}>
+              <Box overflowY="auto" mb={2}>
                 <ScrollableChat message={message} />
               </Box>
             )}
