@@ -7,79 +7,37 @@ export default function ScrollableChat({ message = [] }) {
   const { user } = ChatState();
 
   return (
-    <div 
-      style={{ 
-        display: "flex", 
-        flexDirection: "column",
-        overflowY: "auto", 
-        height: "100%", 
-        scrollBehavior: "smooth", 
-        padding: "10px",  // Helps maintain scroll position
-      }}
-    >
-      <ScrollableFeed forceScroll>
-        {message.map((m, i) => {
-          const isUser = m.sender?._id === user._id;
-          const showAvatar = isSameSender(message, m, i, user._id) || isLastMessage(message, i, user._id);
-
-          return (
-            <div 
-              key={m._id} 
-              style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: isUser ? "flex-end" : "flex-start",
-                marginBottom: isSameUser(message, m, i, user._id) ? "5px" : "15px",
+    <div style={{ overflowY: "auto", height: "100%", scrollBehavior: "smooth" }}>
+      <ScrollableFeed>
+        {message.map((m, i) => (
+          <div style={{ display: "flex", alignItems: "center" }} key={m._id}>
+            {(isSameSender(message, m, i, user._id) || isLastMessage(message, i, user._id)) && (
+              <Tooltip label={m.sender?.name || "Unknown"} placement="bottom-start" hasArrow>
+                <Avatar
+                  mt="7px"
+                  mr="8px"
+                  size="sm"
+                  cursor="pointer"
+                  name={m.sender?.name || "Unknown"} // Fallback if name is missing
+                />
+              </Tooltip>
+            )}
+            <span
+              style={{
+                backgroundColor: m.sender?._id === user._id ? "#0889ff" : "#D3D3D3",
+                marginLeft: isSameSenderMargin(message, m, i, user._id),
+                marginTop: isSameUser(message, m, i, user._id) ? "3px" : "10px",
+                borderRadius: "20px",
+                padding: "8px 15px",
+                maxWidth: "75%",
+                color: m.sender?._id === user._id ? "#ffffff" : "#252323",
+                wordBreak: "break-word", // Prevents text overflow
               }}
             >
-              {/* Avatar stays at bottom-left for received messages */}
-              {showAvatar && !isUser && (
-                <Tooltip label={m.sender?.name || "Unknown"} placement="bottom-start" hasArrow>
-                  <Avatar
-                    size="sm"
-                    cursor="pointer"
-                    name={m.sender?.name || "Unknown"} 
-                    src={m.sender?.pic}
-                    style={{ marginRight: "8px", alignSelf: "flex-end" }}
-                  />
-                </Tooltip>
-              )}
-
-              {/* Message bubble */}
-              <div 
-                style={{ 
-                  maxWidth: "65%", 
-                  backgroundColor: isUser ? "#0889ff" : "#D3D3D3",
-                  color: isUser ? "#ffffff" : "#252323",
-                  padding: "10px 15px",
-                  borderRadius: "18px",
-                  wordBreak: "break-word",
-                  fontSize: "16px",
-                  display: "inline-block",
-                  position: "relative",
-                  minWidth: "fit-content",
-                  marginLeft: isUser ? "0px" : (showAvatar ? "5px" : "45px"),
-                  textAlign: "left",
-                }}
-              >
-                <span>{m.content}</span>
-
-                {/* Timestamp inside the message at the bottom-right */}
-                <div 
-                  style={{ 
-                    fontSize: "10px", 
-                    color: isUser ? "#e0e0e0" : "#555", 
-                    textAlign: "right",
-                    marginTop: "5px",
-                    display: "block",
-                  }}
-                >
-                  {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+              {m.content}
+            </span>
+          </div>
+        ))}
       </ScrollableFeed>
     </div>
   );
