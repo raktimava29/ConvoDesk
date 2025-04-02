@@ -29,7 +29,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
   const toast = useToast();
 
   const { colorMode, toggleColorMode } = useColorMode();
-  const bgColor = useColorModeValue("#E8E8E8", "gray.700"); 
+  const bgColor = useColorModeValue("gray.200", "gray.700"); 
   const textColor = useColorModeValue("black", "white"); 
   const inputBg = useColorModeValue("#E0E0E0", "gray.600"); 
   const modalBg = useColorModeValue("white", "gray.800"); 
