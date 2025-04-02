@@ -20,6 +20,7 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat,notification,setNotification } = ChatState();
   const { isOpen,onOpen,onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
+  const [loadingC, setLoadingC] = useState(false);
   const [message, setMessage] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [sockConnect , setSockConnect] = useState(false);
@@ -143,6 +144,20 @@ export default function SingleChat({ fetchAgain, setFetchAgain }) {
       });
     }
   }
+  
+  useEffect(() => {
+    if (user) {
+      setSelectedChat(null);
+      setMessage([]);         
+      setLoadingC(true);       
+  
+      setTimeout(() => {
+        setLoadingC(false);
+      }, 1000);
+    }
+  }, [user, setSelectedChat]);
+  
+  
 
   useEffect(() => {
     socket = io(ENDPOINT);

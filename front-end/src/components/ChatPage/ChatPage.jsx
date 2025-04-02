@@ -19,7 +19,7 @@ export default function Chatpage() {
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 2000);
   }, []);
 
   if (isLoading) {
