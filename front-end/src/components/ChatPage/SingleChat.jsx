@@ -13,7 +13,8 @@ import Lottie from 'react-lottie'
 import animationData from '../Extras/Typing.json'
 import { useColorMode, useColorModeValue } from "@chakra-ui/react";
 
-const ENDPOINT = "http://localhost:5000/";
+// const ENDPOINT = "http://localhost:5000/";
+const ENDPOINT = "https://convodesk.onrender.com/";
 var socket,selectedChatCompare;
 
 export default function SingleChat({ fetchAgain, setFetchAgain }) {
