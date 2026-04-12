@@ -20,3 +20,14 @@ You can check out the deployed project [here](https://convodesk.onrender.com/).
 - **Database**: MongoDB
 - **Real-Time Communication**: Socket.io
 - **Authentication**: JWT (JSON Web Tokens)
+ 
+## Screenshots
+
+### Login 
+![](./front-end/src/assets/Screenshot%202026-04-12%20135302.png)
+
+### Chats 
+![](./front-end/src/assets/Screenshot%202026-04-12%20135146.png)
+
+### Group Chats 
+![](./front-end/src/assets/Screenshot%202026-04-12%20135236.png)
